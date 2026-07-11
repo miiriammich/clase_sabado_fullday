@@ -380,6 +380,52 @@
   }
   .metric span{font-size:0.82rem;color:var(--text-muted);margin-top:8px;display:block;}
 
+  /* ===== MASCOTA ===== */
+  #mascota{
+    border-top:1px solid var(--border);
+    background:var(--bg-panel);
+  }
+  .mascota-grid{
+    display:grid;grid-template-columns:0.85fr 1.15fr;gap:60px;align-items:center;
+  }
+  .mascota-photo{
+    position:relative;
+    aspect-ratio:3/4;
+    border-radius:24px;
+    overflow:hidden;
+    border:1px solid var(--border-bright);
+  }
+  .mascota-photo::before{
+    content:'';position:absolute;inset:-2px;z-index:0;
+    background:conic-gradient(from 180deg, var(--accent-ignition), var(--accent-thruster), var(--accent-signal), var(--accent-ignition));
+    opacity:.55;filter:blur(18px);
+  }
+  .mascota-photo img{
+    position:relative;z-index:1;
+    width:100%;height:100%;object-fit:cover;object-position:top center;
+    border-radius:24px;
+  }
+  .mascota-badge{
+    position:absolute;bottom:16px;left:16px;z-index:2;
+    background:rgba(10,14,39,0.75);backdrop-filter:blur(8px);
+    border:1px solid var(--border-bright);
+    border-radius:100px;
+    padding:8px 16px;
+    font-family:var(--mono);font-size:0.72rem;letter-spacing:.04em;
+    display:flex;align-items:center;gap:8px;
+  }
+  .mascota-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--accent-signal);box-shadow:0 0 8px var(--accent-signal);}
+  .mascota-text h3{
+    font-family:var(--display);font-size:1.8rem;font-weight:700;margin-bottom:16px;letter-spacing:-0.01em;
+  }
+  .mascota-text p{color:var(--text-muted);line-height:1.7;margin-bottom:16px;max-width:480px;}
+  .mascota-tags{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;}
+  .mascota-tags span{
+    font-family:var(--mono);font-size:0.72rem;color:var(--text-primary);
+    border:1px solid var(--border-bright);border-radius:100px;
+    padding:7px 14px;
+  }
+
   /* ===== TESTIMONIOS ===== */
   .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
   .testi{
@@ -740,6 +786,27 @@
           <h4>Órbita estable</h4>
           <p>El sistema opera solo: transferimos conocimiento a tu equipo y monitoreamos resultados.</p>
           <span class="stage-time">Mes 4 en adelante</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MASCOTA ===== -->
+  <section id="mascota" class="py">
+    <div class="wrap mascota-grid">
+      <div class="mascota-photo reveal">
+        <img src="mascota.jpg" alt="Perro pug, mascota oficial de Rocket SA, con un lazo azul, sentado en un sillón">
+        <div class="mascota-badge"><span class="dot"></span> EN LÍNEA — LISTO PARA DESPEGAR</div>
+      </div>
+      <div class="mascota-text reveal">
+        <div class="eyebrow">MIEMBRO DEL EQUIPO</div>
+        <h3>Rocky, nuestro director de moral y control de calidad.</h3>
+        <p>No revisa dashboards, pero supervisa cada sesión de estrategia con la misma seriedad que un CFO. Su lazo azul es su credencial oficial: acceso total a las reuniones, ninguna responsabilidad sobre los KPIs.</p>
+        <p>Si algo en Rocket SA genera sonrisas antes que resultados, probablemente Rocky estuvo involucrado.</p>
+        <div class="mascota-tags">
+          <span>Bienvenidas & despedidas</span>
+          <span>Soporte moral 24/7</span>
+          <span>Cero SLA</span>
         </div>
       </div>
     </div>
