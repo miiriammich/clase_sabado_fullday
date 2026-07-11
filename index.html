@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rocket SA — Consultoría, Ventas, Marketing e IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-void: #0A0E27;
+    --bg-panel: #10152F;
+    --bg-panel-light: #1A2050;
+    --accent-ignition: #FF5C35;
+    --accent-ignition-dim: #FF5C3522;
+    --accent-thruster: #8B5CF6;
+    --accent-thruster-dim: #8B5CF622;
+    --accent-signal: #2DD4BF;
+    --accent-signal-dim: #2DD4BF22;
+    --text-primary: #F1F3F9;
+    --text-muted: #8891B0;
+    --text-faint: #565D82;
+    --border: rgba(241,243,249,0.09);
+    --border-bright: rgba(241,243,249,0.18);
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Sora', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-void);
+    color:var(--text-primary);
+    font-family:var(--body);
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  /* ===== Starfield background ===== */
+  #starfield{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139,92,246,0.18), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 10%, rgba(45,212,191,0.10), transparent 60%),
+      var(--bg-void);
+  }
+  .star{
+    position:absolute;background:#fff;border-radius:50%;
+    animation:twinkle var(--dur,4s) ease-in-out infinite;
+    opacity:.3;
+  }
+  @keyframes twinkle{
+    0%,100%{opacity:.15;}
+    50%{opacity:.9;}
+  }
+
+  a{color:inherit;text-decoration:none;}
+  ul{list-style:none;}
+  img,svg{display:block;}
+  section{position:relative;z-index:1;}
+
+  ::selection{background:var(--accent-ignition);color:#0A0E27;}
+
+  /* ===== Focus visibility ===== */
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--accent-signal);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:0.72rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--accent-signal);
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:22px;height:1px;
+    background:var(--accent-signal);
+    display:inline-block;
+  }
+
+  .wrap{
+    max-width:1240px;
+    margin:0 auto;
+    padding:0 40px;
+  }
+
+  /* ===== NAV ===== */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(10,14,39,0.72);
+    backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid var(--border);
+    transition:border-color .3s;
+  }
+  nav{
+    max-width:1240px;margin:0 auto;padding:0 40px;
+    height:76px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:1.3rem;
+    letter-spacing:-0.02em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .logo-mark{
+    width:30px;height:30px;
+    position:relative;
+  }
+  .logo span{color:var(--accent-ignition);}
+
+  .nav-links{
+    display:flex;align-items:center;gap:38px;
+  }
+  .nav-links > li{position:relative;}
+  .nav-links a.top{
+    font-size:0.92rem;font-weight:500;color:var(--text-muted);
+    display:flex;align-items:center;gap:6px;
+    padding:10px 0;
+    transition:color .2s;
+  }
+  .nav-links a.top:hover, .nav-links li:hover a.top{color:var(--text-primary);}
+  .caret{
+    width:9px;height:9px;
+    border-right:1.5px solid currentColor;
+    border-bottom:1.5px solid currentColor;
+    transform:rotate(45deg) translateY(-2px);
+    transition:transform .25s;
+  }
+  .has-dropdown:hover .caret{transform:rotate(225deg) translateY(2px);}
+
+  .dropdown{
+    position:absolute;top:100%;left:50%;
+    transform:translate(-50%,8px);
+    width:560px;
+    background:var(--bg-panel);
+    border:1px solid var(--border-bright);
+    border-radius:14px;
+    padding:14px;
+    display:grid;grid-template-columns:1fr 1fr;gap:6px;
+    opacity:0;visibility:hidden;
+    transition:opacity .22s ease, transform .22s ease, visibility .22s;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);
+  }
+  .has-dropdown:hover .dropdown{
+    opacity:1;visibility:visible;transform:translate(-50%,14px);
+  }
+  .dropdown a{
+    display:flex;gap:12px;align-items:flex-start;
+    padding:12px 14px;border-radius:10px;
+    transition:background .2s;
+  }
+  .dropdown a:hover{background:var(--bg-panel-light);}
+  .dd-icon{
+    width:34px;height:34px;flex:none;border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;
+  }
+  .dd-text strong{display:block;font-size:0.88rem;font-weight:600;margin-bottom:2px;}
+  .dd-text span{font-size:0.76rem;color:var(--text-muted);line-height:1.4;}
+
+  .cta-btn{
+    font-family:var(--body);
+    font-weight:600;font-size:0.88rem;
+    background:var(--accent-ignition);
+    color:#160800;
+    padding:11px 22px;
+    border-radius:100px;
+    border:none;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:transform .2s ease, box-shadow .2s ease, background .2s;
+    box-shadow:0 0 0 0 rgba(255,92,53,0.5);
+  }
+  .cta-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px -4px rgba(255,92,53,0.55);
+  }
+  .cta-btn.ghost{
+    background:transparent;color:var(--text-primary);
+    border:1px solid var(--border-bright);
+  }
+  .cta-btn.ghost:hover{border-color:var(--accent-signal);box-shadow:none;background:rgba(45,212,191,0.06);}
+
+  .burger{display:none;}
+
+  /* ===== HERO ===== */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:160px 0 100px;
+    position:relative;
+  }
+  .hero-inner{
+    display:grid;grid-template-columns:1.1fr 0.9fr;gap:60px;align-items:center;
+  }
+  .hero h1{
+    font-family:var(--display);
+    font-size:clamp(2.6rem, 5.4vw, 4.4rem);
+    line-height:1.03;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    margin-bottom:26px;
+  }
+  .hero h1 .grad{
+    background:linear-gradient(100deg, var(--accent-ignition), var(--accent-thruster) 60%, var(--accent-signal));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.lead{
+    font-size:1.12rem;
+    color:var(--text-muted);
+    max-width:520px;
+    line-height:1.65;
+    margin-bottom:38px;
+  }
+  .hero-ctas{display:flex;gap:16px;margin-bottom:56px;flex-wrap:wrap;}
+
+  .hero-metrics{
+    display:flex;gap:36px;
+    font-family:var(--mono);
+  }
+  .hero-metrics div strong{
+    display:block;font-size:1.5rem;font-weight:500;color:var(--text-primary);
+  }
+  .hero-metrics div span{font-size:0.72rem;color:var(--text-faint);letter-spacing:.04em;}
+
+  /* Trajectory visual */
+  .traj-box{
+    position:relative;
+    aspect-ratio:1/1;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .traj-box svg{width:100%;height:100%;overflow:visible;}
+  .orbit-ring{
+    fill:none;stroke:var(--border-bright);stroke-width:1;stroke-dasharray:3 7;
+  }
+  .traj-path{
+    fill:none;stroke:url(#trajGrad);stroke-width:2.5;
+    stroke-linecap:round;
+    stroke-dasharray:900;
+    stroke-dashoffset:900;
+    animation:draw 2.6s cubic-bezier(.4,0,.2,1) 0.3s forwards;
+  }
+  @keyframes draw{to{stroke-dashoffset:0;}}
+  #rocket-token{
+    offset-path:path('M 40,340 C 120,340 140,120 320,60 C 400,32 440,20 460,10');
+    offset-rotate:auto;
+    animation:fly 2.6s cubic-bezier(.4,0,.2,1) 0.3s forwards, glow 2s ease-in-out infinite 3s;
+    opacity:0;
+  }
+  @keyframes fly{
+    0%{offset-distance:0%;opacity:1;}
+    100%{offset-distance:100%;opacity:1;}
+  }
+  @keyframes glow{
+    0%,100%{filter:drop-shadow(0 0 4px var(--accent-ignition));}
+    50%{filter:drop-shadow(0 0 14px var(--accent-ignition));}
+  }
+  .node{fill:var(--bg-panel);stroke:var(--border-bright);stroke-width:1.5;}
+  .node-dot{fill:var(--accent-signal);}
+  .node-label{font-family:var(--mono);font-size:9px;fill:var(--text-faint);letter-spacing:.05em;}
+
+  /* ===== SECTION HEADS ===== */
+  .section-head{
+    max-width:640px;margin-bottom:64px;
+  }
+  .section-head h2{
+    font-family:var(--display);
+    font-size:clamp(2rem, 3.6vw, 2.9rem);
+    font-weight:700;
+    letter-spacing:-0.015em;
+    line-height:1.12;
+  }
+  .section-head p{
+    color:var(--text-muted);font-size:1.02rem;margin-top:18px;line-height:1.6;
+  }
+
+  .py{padding:130px 0;}
+  .py-sm{padding:80px 0;}
+
+  /* ===== SERVICES ===== */
+  #servicios{border-top:1px solid var(--border);}
+  .service-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+    border-radius:20px;overflow:hidden;
+  }
+  .service-card{
+    background:var(--bg-void);
+    padding:38px 30px;
+    transition:background .35s ease;
+    position:relative;
+    min-height:380px;
+    display:flex;flex-direction:column;
+  }
+  .service-card:hover{background:var(--bg-panel);}
+  .service-card .s-icon{
+    width:48px;height:48px;border-radius:13px;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:26px;font-size:20px;
+    transition:transform .3s ease;
+  }
+  .service-card:hover .s-icon{transform:translateY(-4px) rotate(-4deg);}
+  .service-card h3{
+    font-family:var(--display);font-size:1.28rem;font-weight:600;margin-bottom:12px;
+  }
+  .service-card p{color:var(--text-muted);font-size:0.92rem;line-height:1.6;margin-bottom:22px;}
+  .service-card ul{margin-top:auto;display:flex;flex-direction:column;gap:9px;}
+  .service-card ul li{
+    font-size:0.82rem;color:var(--text-faint);
+    display:flex;align-items:center;gap:9px;
+  }
+  .service-card ul li::before{
+    content:'';width:5px;height:5px;border-radius:50%;
+    background:var(--card-accent, var(--accent-signal));flex:none;
+  }
+  .card-1{--card-accent:var(--accent-ignition);}
+  .card-1 .s-icon{background:var(--accent-ignition-dim);color:var(--accent-ignition);}
+  .card-2{--card-accent:var(--accent-signal);}
+  .card-2 .s-icon{background:var(--accent-signal-dim);color:var(--accent-signal);}
+  .card-3{--card-accent:var(--accent-thruster);}
+  .card-3 .s-icon{background:var(--accent-thruster-dim);color:var(--accent-thruster);}
+  .card-4{--card-accent:#FFD23F;}
+  .card-4 .s-icon{background:#FFD23F22;color:#FFD23F;}
+
+  /* ===== SEQUENCE (launch stages, real order) ===== */
+  #secuencia{background:var(--bg-panel);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+  .stage-line{
+    position:relative;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+    margin-top:20px;
+  }
+  .stage-line::before{
+    content:'';position:absolute;top:17px;left:0;right:0;height:1px;
+    background:linear-gradient(90deg, var(--accent-ignition), var(--accent-thruster), var(--accent-signal));
+    opacity:.4;
+  }
+  .stage{padding-right:30px;position:relative;}
+  .stage-dot{
+    width:35px;height:35px;border-radius:50%;
+    background:var(--bg-void);border:1.5px solid var(--border-bright);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:0.7rem;color:var(--text-muted);
+    margin-bottom:28px;position:relative;z-index:1;
+  }
+  .stage:nth-child(1) .stage-dot{border-color:var(--accent-ignition);color:var(--accent-ignition);}
+  .stage:nth-child(2) .stage-dot{border-color:#ff9d3f;color:#ff9d3f;}
+  .stage:nth-child(3) .stage-dot{border-color:var(--accent-thruster);color:var(--accent-thruster);}
+  .stage:nth-child(4) .stage-dot{border-color:var(--accent-signal);color:var(--accent-signal);}
+  .stage h4{font-family:var(--display);font-size:1.1rem;margin-bottom:10px;font-weight:600;}
+  .stage p{color:var(--text-muted);font-size:0.88rem;line-height:1.6;}
+  .stage-time{
+    font-family:var(--mono);font-size:0.7rem;color:var(--text-faint);
+    display:block;margin-top:14px;letter-spacing:.04em;
+  }
+
+  /* ===== STATS ===== */
+  #metricas{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:1px;background:var(--border);
+    border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  }
+  .metric{
+    background:var(--bg-void);padding:56px 30px;text-align:left;
+  }
+  .metric strong{
+    font-family:var(--display);font-size:2.6rem;font-weight:700;
+    display:block;
+    background:linear-gradient(120deg,var(--text-primary),var(--text-muted));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .metric span{font-size:0.82rem;color:var(--text-muted);margin-top:8px;display:block;}
+
+  /* ===== TESTIMONIOS ===== */
+  .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .testi{
+    background:var(--bg-panel);border:1px solid var(--border);border-radius:16px;
+    padding:32px;display:flex;flex-direction:column;
+  }
+  .testi .quote{font-size:0.95rem;line-height:1.65;color:var(--text-primary);margin-bottom:24px;}
+  .testi .who{display:flex;align-items:center;gap:12px;margin-top:auto;}
+  .testi .avatar{
+    width:40px;height:40px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--display);font-weight:700;font-size:0.9rem;
+    color:#0A0E27;
+  }
+  .testi .who strong{display:block;font-size:0.86rem;}
+  .testi .who span{font-size:0.76rem;color:var(--text-muted);}
+
+  /* ===== CONTACT ===== */
+  #contacto{
+    border-top:1px solid var(--border);
+    background:
+      radial-gradient(ellipse 60% 60% at 20% 20%, rgba(255,92,53,0.07), transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 80%, rgba(139,92,246,0.08), transparent 60%);
+  }
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:start;}
+  .contact-info h2{
+    font-family:var(--display);font-size:clamp(2rem,3.6vw,2.8rem);font-weight:700;
+    margin-bottom:20px;letter-spacing:-0.015em;
+  }
+  .contact-info p{color:var(--text-muted);line-height:1.65;margin-bottom:32px;max-width:440px;}
+  .contact-detail{display:flex;gap:14px;align-items:flex-start;margin-bottom:22px;}
+  .contact-detail .ic{
+    width:38px;height:38px;border-radius:10px;background:var(--bg-panel-light);
+    display:flex;align-items:center;justify-content:center;flex:none;
+    border:1px solid var(--border-bright);
+  }
+  .contact-detail strong{display:block;font-size:0.88rem;}
+  .contact-detail span{font-size:0.84rem;color:var(--text-muted);}
+
+  form{
+    background:var(--bg-panel);
+    border:1px solid var(--border-bright);
+    border-radius:20px;
+    padding:36px;
+    display:flex;flex-direction:column;gap:18px;
+  }
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  label{
+    font-family:var(--mono);font-size:0.7rem;color:var(--text-faint);
+    letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;display:block;
+  }
+  input, textarea, select{
+    width:100%;background:var(--bg-void);
+    border:1px solid var(--border-bright);
+    border-radius:10px;padding:13px 14px;
+    color:var(--text-primary);font-family:var(--body);font-size:0.9rem;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  input:focus, textarea:focus, select:focus{
+    border-color:var(--accent-signal);
+    box-shadow:0 0 0 3px rgba(45,212,191,0.15);
+    outline:none;
+  }
+  textarea{resize:vertical;min-height:100px;}
+  form .cta-btn{justify-content:center;width:100%;margin-top:6px;font-size:0.95rem;padding:14px;}
+
+  /* ===== FOOTER ===== */
+  footer{
+    border-top:1px solid var(--border);
+    padding:60px 0 30px;
+  }
+  .foot-top{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    flex-wrap:wrap;gap:40px;margin-bottom:50px;
+  }
+  .foot-brand .logo{margin-bottom:14px;}
+  .foot-brand p{color:var(--text-muted);font-size:0.88rem;max-width:280px;line-height:1.6;}
+  .foot-cols{display:flex;gap:70px;}
+  .foot-col h5{
+    font-family:var(--mono);font-size:0.72rem;color:var(--text-faint);
+    text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px;
+  }
+  .foot-col ul{display:flex;flex-direction:column;gap:11px;}
+  .foot-col a{font-size:0.87rem;color:var(--text-muted);transition:color .2s;}
+  .foot-col a:hover{color:var(--text-primary);}
+
+  .social-row{display:flex;gap:12px;}
+  .social-row a{
+    width:40px;height:40px;border-radius:50%;
+    border:1px solid var(--border-bright);
+    display:flex;align-items:center;justify-content:center;
+    transition:all .25s ease;
+  }
+  .social-row a:hover{
+    background:var(--accent-ignition);border-color:var(--accent-ignition);
+    color:#160800;transform:translateY(-3px);
+  }
+  .social-row svg{width:17px;height:17px;}
+
+  .foot-bottom{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-top:26px;border-top:1px solid var(--border);
+    flex-wrap:wrap;gap:16px;
+  }
+  .foot-bottom p{font-size:0.78rem;color:var(--text-faint);}
+  .foot-bottom .legal{display:flex;gap:24px;}
+  .foot-bottom .legal a{font-size:0.78rem;color:var(--text-faint);}
+  .foot-bottom .legal a:hover{color:var(--text-muted);}
+
+  /* ===== reveal on scroll ===== */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease, transform .7s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ===== responsive ===== */
+  @media (max-width:980px){
+    .hero-inner{grid-template-columns:1fr;}
+    .traj-box{max-width:400px;margin:0 auto;}
+    .service-grid{grid-template-columns:repeat(2,1fr);}
+    #metricas{grid-template-columns:repeat(2,1fr);}
+    .stage-line{grid-template-columns:repeat(2,1fr);row-gap:40px;}
+    .stage-line::before{display:none;}
+    .testi-grid{grid-template-columns:1fr;}
+    .contact-grid{grid-template-columns:1fr;gap:50px;}
+    .nav-links{display:none;}
+    .burger{
+      display:flex;width:38px;height:38px;border-radius:10px;
+      border:1px solid var(--border-bright);background:transparent;
+      align-items:center;justify-content:center;flex-direction:column;gap:4px;cursor:pointer;
+    }
+    .burger span{width:16px;height:1.5px;background:var(--text-primary);}
+    .foot-top{flex-direction:column;}
+    .foot-cols{gap:40px;}
+  }
+  @media (max-width:600px){
+    .wrap, nav{padding:0 22px;}
+    .service-grid{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+    #metricas{grid-template-columns:1fr;}
+    .hero{padding:140px 0 70px;}
+    .foot-cols{flex-wrap:wrap;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+  }
+</style>
+</head>
+<body>
+
+<div id="starfield"></div>
+
+<header>
+  <nav>
+    <a href="#" class="logo">
+      <svg class="logo-mark" viewBox="0 0 30 30" fill="none">
+        <path d="M15 2 C20 7 22 14 20 21 L15 26 L10 21 C8 14 10 7 15 2 Z" fill="url(#navGrad)"/>
+        <circle cx="15" cy="12" r="2.6" fill="#0A0E27"/>
+        <defs>
+          <linearGradient id="navGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FF5C35"/>
+            <stop offset="60%" stop-color="#8B5CF6"/>
+            <stop offset="100%" stop-color="#2DD4BF"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      ROCKET<span>SA</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a class="top" href="#inicio">Inicio</a></li>
+      <li class="has-dropdown">
+        <a class="top" href="#servicios">Servicios <span class="caret"></span></a>
+        <div class="dropdown">
+          <a href="#servicios">
+            <div class="dd-icon" style="background:var(--accent-ignition-dim);color:var(--accent-ignition);">◆</div>
+            <div class="dd-text"><strong>Consultoría</strong><span>Estrategia y diagnóstico de negocio</span></div>
+          </a>
+          <a href="#servicios">
+            <div class="dd-icon" style="background:var(--accent-signal-dim);color:var(--accent-signal);">▲</div>
+            <div class="dd-text"><strong>Ventas</strong><span>Procesos comerciales que cierran</span></div>
+          </a>
+          <a href="#servicios">
+            <div class="dd-icon" style="background:var(--accent-thruster-dim);color:var(--accent-thruster);">●</div>
+            <div class="dd-text"><strong>Marketing</strong><span>Marca, contenido y performance</span></div>
+          </a>
+          <a href="#servicios">
+            <div class="dd-icon" style="background:#FFD23F22;color:#FFD23F;">✦</div>
+            <div class="dd-text"><strong>Inteligencia Artificial</strong><span>Automatización e IA aplicada</span></div>
+          </a>
+        </div>
+      </li>
+      <li><a class="top" href="#secuencia">Metodología</a></li>
+      <li><a class="top" href="#nosotros">Nosotros</a></li>
+      <li><a class="top" href="#contacto">Contacto</a></li>
+    </ul>
+
+    <a href="#contacto" class="cta-btn">Despegar ahora →</a>
+    <button class="burger" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main>
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="inicio">
+    <div class="wrap hero-inner">
+      <div>
+        <div class="eyebrow">CONSULTORÍA · VENTAS · MARKETING · IA</div>
+        <h1>Ponemos tu empresa <span class="grad">en trayectoria</span> de crecimiento real.</h1>
+        <p class="lead">Rocket SA diseña la estrategia, construye el motor comercial y automatiza con IA para que tu negocio despegue — y se quede en órbita.</p>
+        <div class="hero-ctas">
+          <a href="#contacto" class="cta-btn">Agendar diagnóstico →</a>
+          <a href="#servicios" class="cta-btn ghost">Ver servicios</a>
+        </div>
+        <div class="hero-metrics">
+          <div><strong>120+</strong><span>PROYECTOS LANZADOS</span></div>
+          <div><strong>4.6x</strong><span>ROI PROMEDIO</span></div>
+          <div><strong>18</strong><span>PAÍSES ATENDIDOS</span></div>
+        </div>
+      </div>
+
+      <div class="traj-box" aria-hidden="true">
+        <svg viewBox="0 0 480 380">
+          <defs>
+            <linearGradient id="trajGrad" x1="0" y1="1" x2="1" y2="0">
+              <stop offset="0%" stop-color="#FF5C35"/>
+              <stop offset="55%" stop-color="#8B5CF6"/>
+              <stop offset="100%" stop-color="#2DD4BF"/>
+            </linearGradient>
+          </defs>
+          <circle class="orbit-ring" cx="240" cy="190" r="170"/>
+          <circle class="orbit-ring" cx="240" cy="190" r="120"/>
+          <path class="traj-path" d="M 40,340 C 120,340 140,120 320,60 C 400,32 440,20 460,10"/>
+
+          <g>
+            <circle class="node" cx="40" cy="340" r="15"/>
+            <circle class="node-dot" cx="40" cy="340" r="3.5"/>
+            <text class="node-label" x="52" y="345">DIAGNÓSTICO</text>
+          </g>
+          <g>
+            <circle class="node" cx="200" cy="150" r="15"/>
+            <circle class="node-dot" cx="200" cy="150" r="3.5" style="fill:#8B5CF6"/>
+            <text class="node-label" x="212" y="155">EJECUCIÓN</text>
+          </g>
+          <g>
+            <circle class="node" cx="460" cy="10" r="15"/>
+            <circle class="node-dot" cx="460" cy="10" r="3.5" style="fill:#2DD4BF"/>
+            <text class="node-label" x="410" y="-2">ÓRBITA</text>
+          </g>
+
+          <g id="rocket-token">
+            <path d="M0,-11 C6,-5 7,4 5,11 L-5,11 C-7,4 -6,-5 0,-11 Z" fill="#FF5C35"/>
+            <circle cx="0" cy="-1" r="2.3" fill="#0A0E27"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICIOS ===== -->
+  <section id="servicios" class="py">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">NUESTRO MENÚ DE SERVICIOS</div>
+        <h2>Cuatro sistemas, un solo motor de crecimiento.</h2>
+        <p>No vendemos horas — instalamos capacidades. Elige el módulo que tu empresa necesita hoy o combínalos para una transformación completa.</p>
+      </div>
+
+      <div class="service-grid reveal">
+        <article class="service-card card-1">
+          <div class="s-icon">◆</div>
+          <h3>Consultoría Estratégica</h3>
+          <p>Diagnóstico profundo del negocio, definición de objetivos y hoja de ruta ejecutable con métricas claras.</p>
+          <ul>
+            <li>Diagnóstico organizacional</li>
+            <li>Planeamiento estratégico</li>
+            <li>Modelos de negocio</li>
+            <li>Gestión del cambio</li>
+          </ul>
+        </article>
+
+        <article class="service-card card-2">
+          <div class="s-icon">▲</div>
+          <h3>Ventas</h3>
+          <p>Procesos comerciales que convierten: desde prospección hasta cierre, con equipos entrenados y métricas en tiempo real.</p>
+          <ul>
+            <li>Diseño de funnel comercial</li>
+            <li>Capacitación de equipos</li>
+            <li>CRM & pipeline</li>
+            <li>Negociación B2B / B2C</li>
+          </ul>
+        </article>
+
+        <article class="service-card card-3">
+          <div class="s-icon">●</div>
+          <h3>Marketing</h3>
+          <p>Marca, contenido y medios pagados trabajando juntos para generar demanda medible, no solo alcance.</p>
+          <ul>
+            <li>Estrategia de marca</li>
+            <li>Performance & pauta digital</li>
+            <li>Contenido & redes sociales</li>
+            <li>SEO / posicionamiento</li>
+          </ul>
+        </article>
+
+        <article class="service-card card-4">
+          <div class="s-icon">✦</div>
+          <h3>Inteligencia Artificial</h3>
+          <p>Automatización de procesos, agentes conversacionales y analítica predictiva aplicada a resultados de negocio.</p>
+          <ul>
+            <li>Agentes & chatbots con IA</li>
+            <li>Automatización de procesos</li>
+            <li>Analítica predictiva</li>
+            <li>Integración de datos</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== METRICAS ===== -->
+  <section id="metricas">
+    <div class="metric reveal"><strong data-count="120">0</strong><span>Proyectos completados</span></div>
+    <div class="metric reveal"><strong data-count="97">0</strong><span>% de clientes que renuevan</span></div>
+    <div class="metric reveal"><strong data-count="18">0</strong><span>Países con operación activa</span></div>
+    <div class="metric reveal"><strong data-count="9">0</strong><span>Años impulsando empresas</span></div>
+  </section>
+
+  <!-- ===== SECUENCIA (proceso real, por eso numerado) ===== -->
+  <section id="secuencia" class="py">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">SECUENCIA DE LANZAMIENTO</div>
+        <h2>Así es como llevamos tu proyecto de la plataforma a la órbita.</h2>
+        <p>Un proceso con orden real: cada etapa habilita a la siguiente. Nada se acelera saltando pasos.</p>
+      </div>
+
+      <div class="stage-line reveal">
+        <div class="stage">
+          <div class="stage-dot">T-3</div>
+          <h4>Cuenta regresiva</h4>
+          <p>Diagnóstico integral: negocio, mercado, datos y equipo. Definimos el objetivo de la misión.</p>
+          <span class="stage-time">Semana 1–2</span>
+        </div>
+        <div class="stage">
+          <div class="stage-dot">T-0</div>
+          <h4>Ignición</h4>
+          <p>Diseñamos la estrategia y activamos los primeros sistemas: ventas, marketing o IA según prioridad.</p>
+          <span class="stage-time">Semana 3–4</span>
+        </div>
+        <div class="stage">
+          <div class="stage-dot">MAX-Q</div>
+          <h4>Despegue</h4>
+          <p>Ejecución acelerada con iteración semanal, ajustando el rumbo según los datos reales.</p>
+          <span class="stage-time">Mes 2–3</span>
+        </div>
+        <div class="stage">
+          <div class="stage-dot">ORB</div>
+          <h4>Órbita estable</h4>
+          <p>El sistema opera solo: transferimos conocimiento a tu equipo y monitoreamos resultados.</p>
+          <span class="stage-time">Mes 4 en adelante</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIOS ===== -->
+  <section class="py" id="nosotros">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="eyebrow">EQUIPOS QUE YA DESPEGARON</div>
+        <h2>Resultados que hablan en números, no en promesas.</h2>
+      </div>
+      <div class="testi-grid reveal">
+        <div class="testi">
+          <p class="quote">"En cuatro meses duplicamos el pipeline de ventas. El equipo de Rocket SA no entrega un informe, entrega un sistema que funciona."</p>
+          <div class="who">
+            <div class="avatar" style="background:var(--accent-ignition);">MF</div>
+            <div><strong>María Fernández</strong><span>Gerenta Comercial, Grupo Andino</span></div>
+          </div>
+        </div>
+        <div class="testi">
+          <p class="quote">"El agente de IA que implementaron redujo el tiempo de respuesta a clientes de horas a segundos, sin perder calidez en la atención."</p>
+          <div class="who">
+            <div class="avatar" style="background:var(--accent-thruster);">JL</div>
+            <div><strong>Jorge Luna</strong><span>CEO, Constructora Norte</span></div>
+          </div>
+        </div>
+        <div class="testi">
+          <p class="quote">"Reordenaron nuestra estrategia de marketing en semanas. El costo por adquisición bajó 38% en el primer trimestre."</p>
+          <div class="who">
+            <div class="avatar" style="background:var(--accent-signal);">SC</div>
+            <div><strong>Sofía Castro</strong><span>Directora de Marca, Retail Plus</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACTO ===== -->
+  <section id="contacto" class="py">
+    <div class="wrap contact-grid">
+      <div class="contact-info reveal">
+        <div class="eyebrow">HABLEMOS</div>
+        <h2>Cuéntanos tu misión. Diseñamos la trayectoria.</h2>
+        <p>Agenda una primera sesión de diagnóstico sin costo. En 30 minutos identificamos dónde está el mayor freno de tu crecimiento.</p>
+
+        <div class="contact-detail">
+          <div class="ic">✉</div>
+          <div><strong>Correo</strong><span>hola@rocketsa.com</span></div>
+        </div>
+        <div class="contact-detail">
+          <div class="ic">☎</div>
+          <div><strong>Teléfono</strong><span>+51 987 654 321</span></div>
+        </div>
+        <div class="contact-detail">
+          <div class="ic">◎</div>
+          <div><strong>Oficina</strong><span>Av. Javier Prado 1234, Lima, Perú</span></div>
+        </div>
+
+        <div class="social-row" style="margin-top:30px;">
+          <a href="#" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8.5h4.56V23H.22V8.5zM8.34 8.5h4.37v1.98h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 6.99V23h-4.56v-6.94c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.67 1.8-2.67 3.67V23H8.34V8.5z"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.25.07 1.63.07 4.81s-.01 3.56-.07 4.81c-.15 3.23-1.66 4.77-4.92 4.92-1.25.06-1.62.07-4.85.07s-3.6-.01-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92-.06-1.25-.07-1.62-.07-4.81s.02-3.56.07-4.81C2.38 3.96 3.9 2.42 7.15 2.27 8.4 2.21 8.78 2.2 12 2.2zm0 3.5a6.3 6.3 0 100 12.6 6.3 6.3 0 000-12.6zm0 10.4a4.1 4.1 0 110-8.2 4.1 4.1 0 010 8.2zm6.54-10.65a1.47 1.47 0 11-2.94 0 1.47 1.47 0 012.94 0z"/></svg>
+          </a>
+          <a href="#" aria-label="X / Twitter">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-6.9l-5.4-6.8L4.8 22H1.6l8.2-9.3L1 2h7.1l4.9 6.2L18.9 2zm-1.2 18h1.9L7.4 4h-2l12.3 16z"/></svg>
+          </a>
+          <a href="#" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8.44h2.83l.42-3.28h-3.25V8.2c0-.95.26-1.6 1.63-1.6h1.74V3.67C15.98 3.6 15 3.5 13.85 3.5c-2.42 0-4.08 1.48-4.08 4.2v2.58H7v3.28h2.77V22h3.73z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <form>
+        <div class="form-row">
+          <div>
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" placeholder="Tu nombre">
+          </div>
+          <div>
+            <label for="empresa">Empresa</label>
+            <input id="empresa" type="text" placeholder="Nombre de tu empresa">
+          </div>
+        </div>
+        <div>
+          <label for="correo">Correo</label>
+          <input id="correo" type="email" placeholder="tu@empresa.com">
+        </div>
+        <div>
+          <label for="servicio">Servicio de interés</label>
+          <select id="servicio">
+            <option>Consultoría Estratégica</option>
+            <option>Ventas</option>
+            <option>Marketing</option>
+            <option>Inteligencia Artificial</option>
+            <option>Los cuatro — transformación completa</option>
+          </select>
+        </div>
+        <div>
+          <label for="mensaje">Mensaje</label>
+          <textarea id="mensaje" placeholder="Cuéntanos qué necesitas impulsar..."></textarea>
+        </div>
+        <button type="button" class="cta-btn">Enviar mensaje →</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="#" class="logo">
+          <svg class="logo-mark" viewBox="0 0 30 30" fill="none">
+            <path d="M15 2 C20 7 22 14 20 21 L15 26 L10 21 C8 14 10 7 15 2 Z" fill="url(#footGrad)"/>
+            <circle cx="15" cy="12" r="2.6" fill="#0A0E27"/>
+            <defs>
+              <linearGradient id="footGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FF5C35"/>
+                <stop offset="60%" stop-color="#8B5CF6"/>
+                <stop offset="100%" stop-color="#2DD4BF"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          ROCKET<span>SA</span>
+        </a>
+        <p>Consultoría, ventas, marketing e inteligencia artificial para empresas que quieren crecer con dirección, no solo con velocidad.</p>
+      </div>
+
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h5>Servicios</h5>
+          <ul>
+            <li><a href="#servicios">Consultoría</a></li>
+            <li><a href="#servicios">Ventas</a></li>
+            <li><a href="#servicios">Marketing</a></li>
+            <li><a href="#servicios">Inteligencia Artificial</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h5>Empresa</h5>
+          <ul>
+            <li><a href="#nosotros">Nosotros</a></li>
+            <li><a href="#secuencia">Metodología</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="foot-col">
+          <h5>Síguenos</h5>
+          <div class="social-row">
+            <a href="#" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8.5h4.56V23H.22V8.5zM8.34 8.5h4.37v1.98h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 6.99V23h-4.56v-6.94c0-1.66-.03-3.79-2.31-3.79-2.31 0-2.67 1.8-2.67 3.67V23H8.34V8.5z"/></svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.25.07 1.63.07 4.81s-.01 3.56-.07 4.81c-.15 3.23-1.66 4.77-4.92 4.92-1.25.06-1.62.07-4.85.07s-3.6-.01-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92-.06-1.25-.07-1.62-.07-4.81s.02-3.56.07-4.81C2.38 3.96 3.9 2.42 7.15 2.27 8.4 2.21 8.78 2.2 12 2.2zm0 3.5a6.3 6.3 0 100 12.6 6.3 6.3 0 000-12.6zm0 10.4a4.1 4.1 0 110-8.2 4.1 4.1 0 010 8.2zm6.54-10.65a1.47 1.47 0 11-2.94 0 1.47 1.47 0 012.94 0z"/></svg>
+            </a>
+            <a href="#" aria-label="X / Twitter">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-6.9l-5.4-6.8L4.8 22H1.6l8.2-9.3L1 2h7.1l4.9 6.2L18.9 2zm-1.2 18h1.9L7.4 4h-2l12.3 16z"/></svg>
+            </a>
+            <a href="#" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8.44h2.83l.42-3.28h-3.25V8.2c0-.95.26-1.6 1.63-1.6h1.74V3.67C15.98 3.6 15 3.5 13.85 3.5c-2.42 0-4.08 1.48-4.08 4.2v2.58H7v3.28h2.77V22h3.73z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <p>©️ 2026 Rocket SA. Todos los derechos reservados.</p>
+      <div class="legal">
+        <a href="#">Términos</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Starfield generation
+  (function(){
+    const field = document.getElementById('starfield');
+    const count = window.innerWidth < 700 ? 60 : 130;
+    for(let i=0;i<count;i++){
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = Math.random()*2 + 0.5;
+      s.style.width = size+'px';
+      s.style.height = size+'px';
+      s.style.left = Math.random()*100+'%';
+      s.style.top = Math.random()*100+'%';
+      s.style.setProperty('--dur', (2 + Math.random()*5)+'s');
+      s.style.animationDelay = (Math.random()*4)+'s';
+      field.appendChild(s);
+    }
+  })();
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  // Counter animation
+  const counters = document.querySelectorAll('[data-count]');
+  const cio = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const el = e.target;
+        const target = parseInt(el.getAttribute('data-count'),10);
+        let cur = 0;
+        const step = Math.max(1, Math.round(target/40));
+        const t = setInterval(()=>{
+          cur += step;
+          if(cur >= target){ cur = target; clearInterval(t); }
+          el.textContent = cur;
+        }, 30);
+        cio.unobserve(el);
+      }
+    });
+  }, {threshold:0.4});
+  counters.forEach(el=>cio.observe(el));
+
+  // Mobile burger -> simple toggle scroll to services (basic fallback nav)
+  document.querySelector('.burger')?.addEventListener('click', ()=>{
+    document.getElementById('servicios').scrollIntoView({behavior:'smooth'});
+  });
+
+  // Contact form basic feedback (no backend)
+  document.querySelector('#contacto form')?.addEventListener('submit', function(ev){
+    ev.preventDefault();
+  });
+  document.querySelector('#contacto .cta-btn[type="button"]')?.addEventListener('click', function(){
+    this.textContent = '¡Mensaje enviado! ✓';
+    this.style.background = '#2DD4BF';
+    this.style.color = '#0A0E27';
+  });
+</script>
+
+</body>
+</html>
